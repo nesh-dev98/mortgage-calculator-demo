@@ -85,21 +85,26 @@ export function mergeTheme(partial: Partial<EmbedTheme> | undefined): EmbedTheme
 }
 
 function base64UrlEncode(input: string) {
-  const b64 =
-    typeof window !== 'undefined'
-      ? window.btoa(unescape(encodeURIComponent(input)))
-      : Buffer.from(input, 'utf8').toString('base64')
+  const btoaFn: ((s: string) => string) | undefined = (globalThis as any).btoa
+  const BufferCtor: any = (globalThis as any).Buffer
+
+  const b64 = btoaFn
+    ? btoaFn(unescape(encodeURIComponent(input)))
+    : BufferCtor
+      ? BufferCtor.from(input, 'utf8').toString('base64')
+      : ''
   return b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '')
 }
 
 function base64UrlDecode(input: string) {
   const b64 = input.replace(/-/g, '+').replace(/_/g, '/')
   const padded = b64 + '='.repeat((4 - (b64.length % 4)) % 4)
-  const raw =
-    typeof window !== 'undefined'
-      ? decodeURIComponent(escape(window.atob(padded)))
-      : Buffer.from(padded, 'base64').toString('utf8')
-  return raw
+  const atobFn: ((s: string) => string) | undefined = (globalThis as any).atob
+  const BufferCtor: any = (globalThis as any).Buffer
+
+  if (atobFn) return decodeURIComponent(escape(atobFn(padded)))
+  if (BufferCtor) return BufferCtor.from(padded, 'base64').toString('utf8')
+  return ''
 }
 
 export function encodeThemeToParam(theme: EmbedTheme) {
