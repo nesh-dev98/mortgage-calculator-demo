@@ -92,7 +92,7 @@ export default function App() {
         </div>
 
         <footer className="mt-8 text-center text-xs text-slate-500">
-          Built by FutureOne
+          Built by FutureOne V1
         </footer>
       </main>
     </div>
