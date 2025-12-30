@@ -38,32 +38,15 @@ const TABS: TabDef[] = [
 ]
 
 export default function App() {
-  const tabs = TABS
-
   const [activeTab, setActiveTab] = useState<TabKey>('purchase')
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/80 backdrop-blur">
-        <div className="mx-auto max-w-6xl px-4 py-4 sm:px-6">
-          <div className="flex items-center justify-between gap-4">
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <div className="h-9 w-9 rounded-xl bg-navy-900 shadow-sm ring-1 ring-slate-200/60" />
-                <div className="truncate text-base font-semibold tracking-tight text-slate-900">
-                  Mortgage Calculator Suite
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
         <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-[0_10px_30px_-18px_rgba(15,23,42,0.25)]">
           <div className="mb-5 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
             <div className="flex flex-wrap gap-2">
-              {tabs.map(({ key, label, Icon }) => {
+              {TABS.map(({ key, label, Icon }) => {
                 const isActive = key === activeTab
                 return (
                   <button
@@ -99,7 +82,7 @@ export default function App() {
         </div>
 
         <footer className="mt-8 text-center text-xs text-slate-500">
-          Built with Vite + React + TypeScript · Styled with Tailwind · Icons by lucide-react
+          Built by FutureOne
         </footer>
       </main>
     </div>
