@@ -1,4 +1,4 @@
-import { type ComponentType, useMemo, useState } from 'react'
+import { type ComponentType, useState } from 'react'
 import {
   BadgeDollarSign,
   Building2,
@@ -28,18 +28,17 @@ type TabDef = {
   Icon: ComponentType<{ className?: string }>
 }
 
+const TABS: TabDef[] = [
+  { key: 'purchase', label: 'Purchase', Icon: Home },
+  { key: 'refinance', label: 'Refinance', Icon: RefreshCcw },
+  { key: 'rent-vs-buy', label: 'Rent vs Buy', Icon: Building2 },
+  { key: 'cash-out', label: 'Cash Out', Icon: HandCoins },
+  { key: 'rate-buydown', label: 'Rate Buydown', Icon: BadgeDollarSign },
+  { key: 'reverse-mortgage', label: 'Reverse Mortgage', Icon: Landmark }
+]
+
 export default function App() {
-  const tabs = useMemo<TabDef[]>(
-    () => [
-      { key: 'purchase', label: 'Purchase', Icon: Home },
-      { key: 'refinance', label: 'Refinance', Icon: RefreshCcw },
-      { key: 'rent-vs-buy', label: 'Rent vs Buy', Icon: Building2 },
-      { key: 'cash-out', label: 'Cash Out', Icon: HandCoins },
-      { key: 'rate-buydown', label: 'Rate Buydown', Icon: BadgeDollarSign },
-      { key: 'reverse-mortgage', label: 'Reverse Mortgage', Icon: Landmark }
-    ],
-    []
-  )
+  const tabs = TABS
 
   const [activeTab, setActiveTab] = useState<TabKey>('purchase')
 
@@ -55,19 +54,14 @@ export default function App() {
                   Mortgage Calculator Suite
                 </div>
               </div>
-              <div className="mt-1 text-sm text-slate-500">
-                Clean fintech UI with tabbed calculators (placeholder screens for now).
-              </div>
-            </div>
-
-            <div className="hidden items-center gap-2 sm:flex">
-              <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600 shadow-sm">
-                Navy accents · Subtle shadows
-              </div>
             </div>
           </div>
+        </div>
+      </header>
 
-          <nav className="mt-4">
+      <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+        <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-[0_10px_30px_-18px_rgba(15,23,42,0.25)]">
+          <div className="mb-5 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
             <div className="flex flex-wrap gap-2">
               {tabs.map(({ key, label, Icon }) => {
                 const isActive = key === activeTab
@@ -93,24 +87,6 @@ export default function App() {
                   </button>
                 )
               })}
-            </div>
-          </nav>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-[0_10px_30px_-18px_rgba(15,23,42,0.25)]">
-          <div className="mb-5 flex items-center justify-between gap-4">
-            <div>
-              <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                Active Calculator
-              </div>
-              <div className="mt-1 text-lg font-semibold text-slate-900">
-                {tabs.find(t => t.key === activeTab)?.label}
-              </div>
-            </div>
-            <div className="rounded-xl bg-white px-3 py-2 text-xs font-medium text-slate-600 shadow-sm ring-1 ring-slate-200">
-              Coming soon: inputs, amortization, charts
             </div>
           </div>
 
