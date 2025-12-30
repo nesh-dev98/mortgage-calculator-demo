@@ -1,6 +1,8 @@
 import { useEffect, useId, useMemo, useState } from 'react'
 import { Cell, Pie, PieChart, ResponsiveContainer, Sector, Tooltip } from 'recharts'
 import { CHART_ANIMATION, CyberpunkTooltip, renderCyberpunkDefs } from './charts/cyberpunk'
+import { useEmbedTheme } from '../embed/ThemeProvider'
+import { hexToRgba } from '../embed/color'
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -65,9 +67,9 @@ function CurrencyField({ id, label, value, setValue, helper }: CurrencyFieldProp
 
   return (
     <label className="block">
-      <div className="text-sm font-medium text-slate-800">{label}</div>
-      <div className="mt-2 flex items-center rounded-xl border border-slate-200 bg-white shadow-sm focus-within:border-navy-900 focus-within:ring-2 focus-within:ring-navy-900/10">
-        <span className="select-none pl-3 text-sm font-semibold text-slate-500">$</span>
+      <div className="text-sm font-medium text-[color:var(--mc-text)]/85">{label}</div>
+      <div className="mt-2 flex items-center rounded-xl border border-[var(--mc-input-border)] bg-[var(--mc-input-bg)] shadow-sm focus-within:border-[var(--mc-primary)] focus-within:ring-2 focus-within:ring-[var(--mc-ring)]">
+        <span className="select-none pl-3 text-sm font-semibold text-[var(--mc-muted)]">$</span>
         <input
           id={id}
           inputMode="decimal"
@@ -85,12 +87,12 @@ function CurrencyField({ id, label, value, setValue, helper }: CurrencyFieldProp
             setText(nextText)
             setValue(clampNonNegative(parseCurrencyInput(nextText)))
           }}
-          className="w-full bg-transparent px-2 py-2.5 text-sm font-medium text-slate-900 outline-none"
+          className="w-full bg-transparent px-2 py-2.5 text-sm font-medium text-[var(--mc-text)] outline-none"
           placeholder="0"
           aria-label={label}
         />
       </div>
-      {helper ? <div className="mt-1 text-xs text-slate-500">{helper}</div> : null}
+      {helper ? <div className="mt-1 text-xs text-[var(--mc-muted)]">{helper}</div> : null}
     </label>
   )
 }
@@ -118,8 +120,8 @@ function NumberField({
 }: NumberFieldProps) {
   return (
     <label className="block">
-      <div className="text-sm font-medium text-slate-800">{label}</div>
-      <div className="mt-2 flex items-center rounded-xl border border-slate-200 bg-white shadow-sm focus-within:border-navy-900 focus-within:ring-2 focus-within:ring-navy-900/10">
+      <div className="text-sm font-medium text-[color:var(--mc-text)]/85">{label}</div>
+      <div className="mt-2 flex items-center rounded-xl border border-[var(--mc-input-border)] bg-[var(--mc-input-bg)] shadow-sm focus-within:border-[var(--mc-primary)] focus-within:ring-2 focus-within:ring-[var(--mc-ring)]">
         <input
           id={id}
           type="number"
@@ -128,16 +130,16 @@ function NumberField({
           step={step}
           value={Number.isFinite(value) ? value : 0}
           onChange={e => setValue(clampNonNegative(Number(e.target.value)))}
-          className="w-full bg-transparent px-3 py-2.5 text-sm font-medium text-slate-900 outline-none"
+          className="w-full bg-transparent px-3 py-2.5 text-sm font-medium text-[var(--mc-text)] outline-none"
           aria-label={label}
         />
         {suffix ? (
-          <span className="select-none pr-3 text-sm font-semibold text-slate-500">
+          <span className="select-none pr-3 text-sm font-semibold text-[var(--mc-muted)]">
             {suffix}
           </span>
         ) : null}
       </div>
-      {helper ? <div className="mt-1 text-xs text-slate-500">{helper}</div> : null}
+      {helper ? <div className="mt-1 text-xs text-[var(--mc-muted)]">{helper}</div> : null}
     </label>
   )
 }
@@ -147,6 +149,7 @@ function formatMonthly(value: number) {
 }
 
 export function PurchaseCalculator() {
+  const theme = useEmbedTheme()
   const [homePrice, setHomePrice] = useState(400_000)
   const [downPayment, setDownPayment] = useState(80_000)
   const [interestRatePercent, setInterestRatePercent] = useState(6.5)
@@ -191,23 +194,23 @@ export function PurchaseCalculator() {
   const downPaymentPct = homePrice > 0 ? (downPayment / homePrice) * 100 : 0
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div className="rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface)] p-6 shadow-sm text-[var(--mc-text)]">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <div className="text-sm font-semibold text-slate-900">Purchase</div>
-          <div className="mt-1 text-sm text-slate-500">
+          <div className="text-sm font-semibold text-[var(--mc-text)]">Purchase</div>
+          <div className="mt-1 text-sm text-[var(--mc-muted)]">
             Estimate your monthly payment with taxes and insurance.
           </div>
         </div>
-        <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-600">
+        <div className="rounded-xl border border-[var(--mc-border)] bg-[var(--mc-surface-muted)] px-3 py-2 text-xs font-semibold text-[var(--mc-muted)]">
           Live updates
         </div>
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         {/* Inputs */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="mb-4 text-sm font-semibold text-slate-900">Inputs</div>
+        <section className="rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface)] p-5 shadow-sm">
+          <div className="mb-4 text-sm font-semibold text-[var(--mc-text)]">Inputs</div>
           <div className="grid gap-4">
             <CurrencyField
               id="homePrice"
@@ -259,14 +262,14 @@ export function PurchaseCalculator() {
               />
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <div className="rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface-muted)] p-4">
+              <div className="text-xs font-semibold uppercase tracking-wide text-[var(--mc-muted)]">
                 Loan Amount
               </div>
-              <div className="mt-1 text-lg font-semibold text-slate-900">
+              <div className="mt-1 text-lg font-semibold text-[var(--mc-text)]">
                 {formatCurrency(loanAmount)}
               </div>
-              <div className="mt-1 text-xs text-slate-500">
+              <div className="mt-1 text-xs text-[var(--mc-muted)]">
                 Home price minus down payment.
               </div>
             </div>
@@ -274,14 +277,14 @@ export function PurchaseCalculator() {
         </section>
 
         {/* Results */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="mb-4 text-sm font-semibold text-slate-900">Results</div>
+        <section className="rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface)] p-5 shadow-sm">
+          <div className="mb-4 text-sm font-semibold text-[var(--mc-text)]">Results</div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
-            <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <div className="rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface-muted)] p-5 shadow-sm">
+            <div className="text-xs font-semibold uppercase tracking-wide text-[var(--mc-muted)]">
               Total Monthly Payment
             </div>
-            <div className="mt-1 text-3xl font-semibold tracking-tight text-slate-900">
+            <div className="mt-1 text-3xl font-semibold tracking-tight text-[var(--mc-text)]">
               {formatMonthly(totalMonthlyPayment)}
             </div>
 
@@ -290,40 +293,42 @@ export function PurchaseCalculator() {
                 <div className="flex items-center gap-2">
                   <span
                     className="h-2.5 w-2.5 rounded-full"
-                      style={{
-                        backgroundImage: 'linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)',
-                        boxShadow: '0 0 14px rgba(79,172,254,0.28)'
-                      }}
+                    style={{
+                      backgroundImage: `linear-gradient(135deg, ${theme.chart.primaryFrom} 0%, ${theme.chart.primaryTo} 100%)`,
+                      boxShadow: `0 0 14px ${hexToRgba(theme.chart.primaryTo, 0.28)}`
+                    }}
                   />
-                  <span className="font-medium text-slate-700">Principal &amp; Interest</span>
+                  <span className="font-medium text-[color:var(--mc-text)]/80">
+                    Principal &amp; Interest
+                  </span>
                 </div>
-                <div className="font-semibold text-slate-900">{formatMonthly(monthlyPI)}</div>
+                <div className="font-semibold text-[var(--mc-text)]">{formatMonthly(monthlyPI)}</div>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2">
                   <span
                     className="h-2.5 w-2.5 rounded-full"
-                      style={{
-                        backgroundImage: 'linear-gradient(135deg, #22d3ee 0%, #22c55e 100%)',
-                        boxShadow: '0 0 14px rgba(34,197,94,0.2)'
-                      }}
+                    style={{
+                      backgroundImage: `linear-gradient(135deg, ${theme.chart.accentFrom} 0%, ${theme.chart.accentTo} 100%)`,
+                      boxShadow: `0 0 14px ${hexToRgba(theme.chart.accentTo, 0.2)}`
+                    }}
                   />
-                  <span className="font-medium text-slate-700">Tax</span>
+                  <span className="font-medium text-[color:var(--mc-text)]/80">Tax</span>
                 </div>
-                <div className="font-semibold text-slate-900">{formatMonthly(monthlyTax)}</div>
+                <div className="font-semibold text-[var(--mc-text)]">{formatMonthly(monthlyTax)}</div>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2">
                   <span
                     className="h-2.5 w-2.5 rounded-full"
-                      style={{
-                        backgroundImage: 'linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%)',
-                        boxShadow: '0 0 10px rgba(148,163,184,0.12)'
-                      }}
+                    style={{
+                      backgroundImage: `linear-gradient(135deg, ${theme.chart.neutralFrom} 0%, ${theme.chart.neutralTo} 100%)`,
+                      boxShadow: `0 0 10px ${hexToRgba(theme.chart.neutralTo, 0.12)}`
+                    }}
                   />
-                  <span className="font-medium text-slate-700">Insurance</span>
+                  <span className="font-medium text-[color:var(--mc-text)]/80">Insurance</span>
                 </div>
-                <div className="font-semibold text-slate-900">
+                <div className="font-semibold text-[var(--mc-text)]">
                   {formatMonthly(monthlyInsurance)}
                 </div>
               </div>
@@ -331,16 +336,16 @@ export function PurchaseCalculator() {
           </div>
 
           <div className="mt-6 grid gap-6 lg:grid-cols-1">
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface)] p-4 shadow-sm">
               <div className="mb-3 flex items-center justify-between">
-                <div className="text-sm font-semibold text-slate-900">Breakdown</div>
-                <div className="text-xs font-medium text-slate-500">Donut chart</div>
+                <div className="text-sm font-semibold text-[var(--mc-text)]">Breakdown</div>
+                <div className="text-xs font-medium text-[var(--mc-muted)]">Donut chart</div>
               </div>
 
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart key={chartId}>
-                    {renderCyberpunkDefs(chartId)}
+                    {renderCyberpunkDefs(chartId, theme.chart)}
                     <Pie
                       data={chartData}
                       dataKey="value"

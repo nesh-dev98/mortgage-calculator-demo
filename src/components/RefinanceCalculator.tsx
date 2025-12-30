@@ -10,6 +10,7 @@ import {
   YAxis
 } from 'recharts'
 import { CHART_ANIMATION, CyberpunkTooltip, renderCyberpunkDefs } from './charts/cyberpunk'
+import { useEmbedTheme } from '../embed/ThemeProvider'
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -56,9 +57,9 @@ type MoneyInputProps = {
 function MoneyInput({ id, label, value, onChange, helper }: MoneyInputProps) {
   return (
     <label className="block">
-      <div className="text-sm font-medium text-slate-800">{label}</div>
-      <div className="mt-2 flex items-center rounded-xl border border-slate-200 bg-white shadow-sm focus-within:border-navy-900 focus-within:ring-2 focus-within:ring-navy-900/10">
-        <span className="select-none pl-3 text-sm font-semibold text-slate-500">$</span>
+      <div className="text-sm font-medium text-[color:var(--mc-text)]/85">{label}</div>
+      <div className="mt-2 flex items-center rounded-xl border border-[var(--mc-input-border)] bg-[var(--mc-input-bg)] shadow-sm focus-within:border-[var(--mc-primary)] focus-within:ring-2 focus-within:ring-[var(--mc-ring)]">
+        <span className="select-none pl-3 text-sm font-semibold text-[var(--mc-muted)]">$</span>
         <input
           id={id}
           type="number"
@@ -66,11 +67,11 @@ function MoneyInput({ id, label, value, onChange, helper }: MoneyInputProps) {
           min={0}
           value={Number.isFinite(value) ? value : 0}
           onChange={e => onChange(clampNonNegative(Number(e.target.value)))}
-          className="w-full bg-transparent px-2 py-2.5 text-sm font-medium text-slate-900 outline-none"
+          className="w-full bg-transparent px-2 py-2.5 text-sm font-medium text-[var(--mc-text)] outline-none"
           aria-label={label}
         />
       </div>
-      {helper ? <div className="mt-1 text-xs text-slate-500">{helper}</div> : null}
+      {helper ? <div className="mt-1 text-xs text-[var(--mc-muted)]">{helper}</div> : null}
     </label>
   )
 }
@@ -98,8 +99,8 @@ function NumberInput({
 }: NumberInputProps) {
   return (
     <label className="block">
-      <div className="text-sm font-medium text-slate-800">{label}</div>
-      <div className="mt-2 flex items-center rounded-xl border border-slate-200 bg-white shadow-sm focus-within:border-navy-900 focus-within:ring-2 focus-within:ring-navy-900/10">
+      <div className="text-sm font-medium text-[color:var(--mc-text)]/85">{label}</div>
+      <div className="mt-2 flex items-center rounded-xl border border-[var(--mc-input-border)] bg-[var(--mc-input-bg)] shadow-sm focus-within:border-[var(--mc-primary)] focus-within:ring-2 focus-within:ring-[var(--mc-ring)]">
         <input
           id={id}
           type="number"
@@ -108,21 +109,22 @@ function NumberInput({
           step={step}
           value={Number.isFinite(value) ? value : 0}
           onChange={e => onChange(clampNonNegative(Number(e.target.value)))}
-          className="w-full bg-transparent px-3 py-2.5 text-sm font-medium text-slate-900 outline-none"
+          className="w-full bg-transparent px-3 py-2.5 text-sm font-medium text-[var(--mc-text)] outline-none"
           aria-label={label}
         />
         {suffix ? (
-          <span className="select-none pr-3 text-sm font-semibold text-slate-500">
+          <span className="select-none pr-3 text-sm font-semibold text-[var(--mc-muted)]">
             {suffix}
           </span>
         ) : null}
       </div>
-      {helper ? <div className="mt-1 text-xs text-slate-500">{helper}</div> : null}
+      {helper ? <div className="mt-1 text-xs text-[var(--mc-muted)]">{helper}</div> : null}
     </label>
   )
 }
 
 export function RefinanceCalculator() {
+  const theme = useEmbedTheme()
   const [originalLoanBalance, setOriginalLoanBalance] = useState(320_000)
   const [currentRate, setCurrentRate] = useState(7.25)
   const [newRate, setNewRate] = useState(6.5)
@@ -165,23 +167,23 @@ export function RefinanceCalculator() {
   const showBreakEven = Number.isFinite(breakEvenMonths) && breakEvenMonths > 0
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div className="rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface)] p-6 shadow-sm text-[var(--mc-text)]">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <div className="text-sm font-semibold text-slate-900">Refinance</div>
-          <div className="mt-1 text-sm text-slate-500">
+          <div className="text-sm font-semibold text-[var(--mc-text)]">Refinance</div>
+          <div className="mt-1 text-sm text-[var(--mc-muted)]">
             Compare monthly payments and estimate a break-even point.
           </div>
         </div>
-        <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-600">
+        <div className="rounded-xl border border-[var(--mc-border)] bg-[var(--mc-surface-muted)] px-3 py-2 text-xs font-semibold text-[var(--mc-muted)]">
           Live updates
         </div>
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         {/* Inputs */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="mb-4 text-sm font-semibold text-slate-900">Inputs</div>
+        <section className="rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface)] p-5 shadow-sm">
+          <div className="mb-4 text-sm font-semibold text-[var(--mc-text)]">Inputs</div>
           <div className="grid gap-4">
             <MoneyInput
               id="origBalance"
@@ -229,32 +231,32 @@ export function RefinanceCalculator() {
         </section>
 
         {/* Results */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="mb-4 text-sm font-semibold text-slate-900">Results</div>
+        <section className="rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface)] p-5 shadow-sm">
+          <div className="mb-4 text-sm font-semibold text-[var(--mc-text)]">Results</div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
+          <div className="rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface-muted)] p-5 shadow-sm">
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <div className="text-xs font-semibold uppercase tracking-wide text-[var(--mc-muted)]">
                   Monthly Savings
                 </div>
-                <div className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">
+                <div className="mt-1 text-2xl font-semibold tracking-tight text-[var(--mc-text)]">
                   {monthlySavings >= 0
                     ? formatCurrency(monthlySavings)
                     : `-${formatCurrency(Math.abs(monthlySavings))}`}
                 </div>
-                <div className="mt-1 text-xs text-slate-500">
+                <div className="mt-1 text-xs text-[var(--mc-muted)]">
                   Old payment minus new payment.
                 </div>
               </div>
               <div>
-                <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <div className="text-xs font-semibold uppercase tracking-wide text-[var(--mc-muted)]">
                   Break-even Point
                 </div>
-                <div className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">
+                <div className="mt-1 text-2xl font-semibold tracking-tight text-[var(--mc-text)]">
                   {showBreakEven ? `${breakEvenMonths} mo` : 'N/A'}
                 </div>
-                <div className="mt-1 text-xs text-slate-500">
+                <div className="mt-1 text-xs text-[var(--mc-muted)]">
                   Months to recover closing costs.
                 </div>
               </div>
@@ -262,30 +264,30 @@ export function RefinanceCalculator() {
 
             <div className="mt-4 grid gap-2 text-sm">
               <div className="flex items-center justify-between">
-                <span className="font-medium text-slate-700">Old Monthly Payment</span>
-                <span className="font-semibold text-slate-900">
+                <span className="font-medium text-[color:var(--mc-text)]/80">Old Monthly Payment</span>
+                <span className="font-semibold text-[var(--mc-text)]">
                   {formatCurrency(oldMonthlyPayment)}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="font-medium text-slate-700">New Monthly Payment</span>
-                <span className="font-semibold text-slate-900">
+                <span className="font-medium text-[color:var(--mc-text)]/80">New Monthly Payment</span>
+                <span className="font-semibold text-[var(--mc-text)]">
                   {formatCurrency(newMonthlyPayment)}
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="mt-6 rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface)] p-4 shadow-sm">
             <div className="mb-3 flex items-center justify-between">
-              <div className="text-sm font-semibold text-slate-900">Payment comparison</div>
-              <div className="text-xs font-medium text-slate-500">Bar chart</div>
+              <div className="text-sm font-semibold text-[var(--mc-text)]">Payment comparison</div>
+              <div className="text-xs font-medium text-[var(--mc-muted)]">Bar chart</div>
             </div>
 
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart key={chartId} data={chartData} margin={{ left: 8, right: 8 }}>
-                  {renderCyberpunkDefs(chartId)}
+                  {renderCyberpunkDefs(chartId, theme.chart)}
                   <CartesianGrid strokeDasharray="4 8" stroke="rgba(148,163,184,0.25)" />
                   <XAxis
                     dataKey="name"

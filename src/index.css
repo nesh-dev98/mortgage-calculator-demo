@@ -8,6 +8,30 @@ body {
   height: 100%;
 }
 
+/* Default theme variables (used by Embed Builder + /embed). These defaults match the current UI. */
+:root {
+  --mc-bg: #ffffff;
+  --mc-surface: #ffffff;
+  --mc-surface-muted: #f8fafc; /* slate-50 */
+  --mc-border: #e2e8f0; /* slate-200 */
+  --mc-text: #0f172a; /* slate-900 */
+  --mc-muted: #64748b; /* slate-500 */
+  --mc-primary: #1e1b4b; /* navy-900 */
+  --mc-primary-contrast: #ffffff;
+  --mc-input-bg: #ffffff;
+  --mc-input-border: #e2e8f0;
+  --mc-ring: rgba(30, 27, 75, 0.1);
+
+  --mc-chart-primary-from: #00f2fe;
+  --mc-chart-primary-to: #4facfe;
+  --mc-chart-secondary-from: #fe8c00;
+  --mc-chart-secondary-to: #f83600;
+  --mc-chart-accent-from: #22d3ee;
+  --mc-chart-accent-to: #22c55e;
+  --mc-chart-neutral-from: #e2e8f0;
+  --mc-chart-neutral-to: #94a3b8;
+}
+
 body {
   @apply bg-white text-slate-900 antialiased;
 }

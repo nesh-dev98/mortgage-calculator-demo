@@ -18,30 +18,41 @@ export const CHART_ANIMATION = {
   easing: 'ease-in-out' as const
 }
 
+export type CyberpunkPalette = {
+  primaryFrom: string
+  primaryTo: string
+  secondaryFrom: string
+  secondaryTo: string
+  accentFrom: string
+  accentTo: string
+  neutralFrom: string
+  neutralTo: string
+}
+
 // IMPORTANT: Recharts can filter/clone children; passing a custom <CyberpunkDefs/> component
 // may get dropped in some cases. Export a function that returns a real <defs> element and
 // call it inline so the tree contains an actual <defs>.
-export function renderCyberpunkDefs(idPrefix: string) {
+export function renderCyberpunkDefs(idPrefix: string, palette: CyberpunkPalette = CYBERPUNK) {
   return (
     <defs>
       <linearGradient id={`${idPrefix}-grad-primary`} x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor={CYBERPUNK.primaryFrom} />
-        <stop offset="100%" stopColor={CYBERPUNK.primaryTo} />
+        <stop offset="0%" stopColor={palette.primaryFrom} />
+        <stop offset="100%" stopColor={palette.primaryTo} />
       </linearGradient>
 
       <linearGradient id={`${idPrefix}-grad-secondary`} x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor={CYBERPUNK.secondaryFrom} />
-        <stop offset="100%" stopColor={CYBERPUNK.secondaryTo} />
+        <stop offset="0%" stopColor={palette.secondaryFrom} />
+        <stop offset="100%" stopColor={palette.secondaryTo} />
       </linearGradient>
 
       <linearGradient id={`${idPrefix}-grad-accent`} x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor={CYBERPUNK.accentFrom} />
-        <stop offset="100%" stopColor={CYBERPUNK.accentTo} />
+        <stop offset="0%" stopColor={palette.accentFrom} />
+        <stop offset="100%" stopColor={palette.accentTo} />
       </linearGradient>
 
       <linearGradient id={`${idPrefix}-grad-neutral`} x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor={CYBERPUNK.neutralFrom} />
-        <stop offset="100%" stopColor={CYBERPUNK.neutralTo} />
+        <stop offset="0%" stopColor={palette.neutralFrom} />
+        <stop offset="100%" stopColor={palette.neutralTo} />
       </linearGradient>
 
       {/* Subtle neon glow for “futuristic” look */}

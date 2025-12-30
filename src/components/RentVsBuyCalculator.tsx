@@ -10,6 +10,7 @@ import {
   YAxis
 } from 'recharts'
 import { CHART_ANIMATION, CyberpunkTooltip, renderCyberpunkDefs } from './charts/cyberpunk'
+import { useEmbedTheme } from '../embed/ThemeProvider'
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -51,9 +52,9 @@ type MoneyInputProps = {
 function MoneyInput({ id, label, value, onChange, helper }: MoneyInputProps) {
   return (
     <label className="block">
-      <div className="text-sm font-medium text-slate-800">{label}</div>
-      <div className="mt-2 flex items-center rounded-xl border border-slate-200 bg-white shadow-sm focus-within:border-navy-900 focus-within:ring-2 focus-within:ring-navy-900/10">
-        <span className="select-none pl-3 text-sm font-semibold text-slate-500">$</span>
+      <div className="text-sm font-medium text-[color:var(--mc-text)]/85">{label}</div>
+      <div className="mt-2 flex items-center rounded-xl border border-[var(--mc-input-border)] bg-[var(--mc-input-bg)] shadow-sm focus-within:border-[var(--mc-primary)] focus-within:ring-2 focus-within:ring-[var(--mc-ring)]">
+        <span className="select-none pl-3 text-sm font-semibold text-[var(--mc-muted)]">$</span>
         <input
           id={id}
           type="number"
@@ -61,11 +62,11 @@ function MoneyInput({ id, label, value, onChange, helper }: MoneyInputProps) {
           min={0}
           value={Number.isFinite(value) ? value : 0}
           onChange={e => onChange(clampNonNegative(Number(e.target.value)))}
-          className="w-full bg-transparent px-2 py-2.5 text-sm font-medium text-slate-900 outline-none"
+          className="w-full bg-transparent px-2 py-2.5 text-sm font-medium text-[var(--mc-text)] outline-none"
           aria-label={label}
         />
       </div>
-      {helper ? <div className="mt-1 text-xs text-slate-500">{helper}</div> : null}
+      {helper ? <div className="mt-1 text-xs text-[var(--mc-muted)]">{helper}</div> : null}
     </label>
   )
 }
@@ -93,8 +94,8 @@ function NumberInput({
 }: NumberInputProps) {
   return (
     <label className="block">
-      <div className="text-sm font-medium text-slate-800">{label}</div>
-      <div className="mt-2 flex items-center rounded-xl border border-slate-200 bg-white shadow-sm focus-within:border-navy-900 focus-within:ring-2 focus-within:ring-navy-900/10">
+      <div className="text-sm font-medium text-[color:var(--mc-text)]/85">{label}</div>
+      <div className="mt-2 flex items-center rounded-xl border border-[var(--mc-input-border)] bg-[var(--mc-input-bg)] shadow-sm focus-within:border-[var(--mc-primary)] focus-within:ring-2 focus-within:ring-[var(--mc-ring)]">
         <input
           id={id}
           type="number"
@@ -103,16 +104,16 @@ function NumberInput({
           step={step}
           value={Number.isFinite(value) ? value : 0}
           onChange={e => onChange(clampNonNegative(Number(e.target.value)))}
-          className="w-full bg-transparent px-3 py-2.5 text-sm font-medium text-slate-900 outline-none"
+          className="w-full bg-transparent px-3 py-2.5 text-sm font-medium text-[var(--mc-text)] outline-none"
           aria-label={label}
         />
         {suffix ? (
-          <span className="select-none pr-3 text-sm font-semibold text-slate-500">
+          <span className="select-none pr-3 text-sm font-semibold text-[var(--mc-muted)]">
             {suffix}
           </span>
         ) : null}
       </div>
-      {helper ? <div className="mt-1 text-xs text-slate-500">{helper}</div> : null}
+      {helper ? <div className="mt-1 text-xs text-[var(--mc-muted)]">{helper}</div> : null}
     </label>
   )
 }
@@ -124,6 +125,7 @@ type DataPoint = {
 }
 
 export function RentVsBuyCalculator() {
+  const theme = useEmbedTheme()
   const chartId = `cp-rvb-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`
   // Inputs requested
   const [targetHomePrice, setTargetHomePrice] = useState(400_000)
@@ -231,23 +233,23 @@ export function RentVsBuyCalculator() {
   }, [currentMonthlyRent, durationYears, homeAppreciationPct, rentInflationPct, targetHomePrice])
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div className="rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface)] p-6 shadow-sm text-[var(--mc-text)]">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <div className="text-sm font-semibold text-slate-900">Rent vs Buy</div>
-          <div className="mt-1 text-sm text-slate-500">
+          <div className="text-sm font-semibold text-[var(--mc-text)]">Rent vs Buy</div>
+          <div className="mt-1 text-sm text-[var(--mc-muted)]">
             Compare cumulative renting vs net buying costs over time (simplified model).
           </div>
         </div>
-        <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-600">
+        <div className="rounded-xl border border-[var(--mc-border)] bg-[var(--mc-surface-muted)] px-3 py-2 text-xs font-semibold text-[var(--mc-muted)]">
           Live updates
         </div>
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         {/* Inputs */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="mb-4 text-sm font-semibold text-slate-900">Inputs</div>
+        <section className="rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface)] p-5 shadow-sm">
+          <div className="mb-4 text-sm font-semibold text-[var(--mc-text)]">Inputs</div>
           <div className="grid gap-4">
             <MoneyInput
               id="targetHomePrice"
@@ -292,8 +294,8 @@ export function RentVsBuyCalculator() {
               helper="Chart uses years 1..N."
             />
 
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-600">
-              <div className="font-semibold text-slate-700">Assumptions</div>
+            <div className="rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface-muted)] p-4 text-xs text-[var(--mc-muted)]">
+              <div className="font-semibold text-[color:var(--mc-text)]/80">Assumptions</div>
               <div className="mt-1">
                 {Math.round(ASSUMED_DOWN_PCT * 100)}% down, {ASSUMED_TERM_YEARS}-year fixed at{' '}
                 {ASSUMED_RATE_PCT}% · Property tax {Math.round(ASSUMED_TAX_PCT * 100)}%/yr ·
@@ -304,11 +306,11 @@ export function RentVsBuyCalculator() {
         </section>
 
         {/* Results + Chart */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <section className="rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface)] p-5 shadow-sm">
           <div className="mb-4 flex items-start justify-between gap-3">
             <div>
-              <div className="text-sm font-semibold text-slate-900">Results</div>
-              <div className="mt-1 text-xs text-slate-500">
+              <div className="text-sm font-semibold text-[var(--mc-text)]">Results</div>
+              <div className="mt-1 text-xs text-[var(--mc-muted)]">
                 Net buying cost = mortgage + tax + maintenance − equity gained (principal + appreciation + down payment).
               </div>
             </div>
@@ -317,28 +319,28 @@ export function RentVsBuyCalculator() {
                 'rounded-xl px-3 py-2 text-xs font-semibold',
                 crossoverYear
                   ? 'border border-emerald-200 bg-emerald-50 text-emerald-900'
-                  : 'border border-slate-200 bg-slate-50 text-slate-700'
+                  : 'border border-[var(--mc-border)] bg-[var(--mc-surface-muted)] text-[color:var(--mc-text)]/80'
               ].join(' ')}
             >
               {crossoverYear ? `Crossover: Year ${crossoverYear}` : 'No crossover in range'}
             </div>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
+          <div className="rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface-muted)] p-5 shadow-sm">
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <div className="text-xs font-semibold uppercase tracking-wide text-[var(--mc-muted)]">
                   Rent cost ({Math.round(durationYears)} yrs)
                 </div>
-                <div className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">
+                <div className="mt-1 text-2xl font-semibold tracking-tight text-[var(--mc-text)]">
                   {formatCurrency(summary.finalRentCost)}
                 </div>
               </div>
               <div>
-                <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <div className="text-xs font-semibold uppercase tracking-wide text-[var(--mc-muted)]">
                   Net buy cost ({Math.round(durationYears)} yrs)
                 </div>
-                <div className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">
+                <div className="mt-1 text-2xl font-semibold tracking-tight text-[var(--mc-text)]">
                   {formatCurrency(summary.finalBuyNetCost)}
                 </div>
               </div>
@@ -346,30 +348,30 @@ export function RentVsBuyCalculator() {
 
             <div className="mt-4 grid gap-2 text-sm">
               <div className="flex items-center justify-between">
-                <span className="font-medium text-slate-700">Down Payment (assumed)</span>
-                <span className="font-semibold text-slate-900">
+                <span className="font-medium text-[color:var(--mc-text)]/80">Down Payment (assumed)</span>
+                <span className="font-semibold text-[var(--mc-text)]">
                   {formatCurrency(summary.downPayment)}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="font-medium text-slate-700">Loan Amount (assumed)</span>
-                <span className="font-semibold text-slate-900">
+                <span className="font-medium text-[color:var(--mc-text)]/80">Loan Amount (assumed)</span>
+                <span className="font-semibold text-[var(--mc-text)]">
                   {formatCurrency(summary.loanAmount)}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="font-medium text-slate-700">Mortgage P&amp;I (monthly)</span>
-                <span className="font-semibold text-slate-900">
+                <span className="font-medium text-[color:var(--mc-text)]/80">Mortgage P&amp;I (monthly)</span>
+                <span className="font-semibold text-[var(--mc-text)]">
                   {formatCurrency(summary.monthlyMortgagePayment)}
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="mt-6 rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface)] p-4 shadow-sm">
             <div className="mb-3 flex items-center justify-between">
-              <div className="text-sm font-semibold text-slate-900">Cumulative cost over time</div>
-              <div className="text-xs font-medium text-slate-500">Line chart</div>
+              <div className="text-sm font-semibold text-[var(--mc-text)]">Cumulative cost over time</div>
+              <div className="text-xs font-medium text-[var(--mc-muted)]">Line chart</div>
             </div>
 
             <div className="h-72">
@@ -380,7 +382,7 @@ export function RentVsBuyCalculator() {
                   data={data}
                   margin={{ left: 8, right: 16, top: 8, bottom: 8 }}
                 >
-                  {renderCyberpunkDefs(chartId)}
+                  {renderCyberpunkDefs(chartId, theme.chart)}
                   <CartesianGrid strokeDasharray="4 8" stroke="rgba(148,163,184,0.25)" />
                   <XAxis
                     dataKey="year"

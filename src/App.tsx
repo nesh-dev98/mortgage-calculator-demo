@@ -2,6 +2,7 @@ import { type ComponentType, useState } from 'react'
 import {
   BadgeDollarSign,
   Building2,
+  Code,
   HandCoins,
   Home,
   Landmark,
@@ -13,6 +14,8 @@ import { RateBuydownCalculator } from './components/RateBuydownCalculator'
 import { RefinanceCalculator } from './components/RefinanceCalculator'
 import { RentVsBuyCalculator } from './components/RentVsBuyCalculator'
 import { ReverseMortgageCalculator } from './components/ReverseMortgageCalculator'
+import { EmbedBuilder } from './embed/EmbedBuilder'
+import { EmbedPage } from './embed/EmbedPage'
 
 type TabKey =
   | 'purchase'
@@ -21,6 +24,7 @@ type TabKey =
   | 'cash-out'
   | 'rate-buydown'
   | 'reverse-mortgage'
+  | 'embed'
 
 type TabDef = {
   key: TabKey
@@ -34,10 +38,15 @@ const TABS: TabDef[] = [
   { key: 'rent-vs-buy', label: 'Rent vs Buy', Icon: Building2 },
   { key: 'cash-out', label: 'Cash Out', Icon: HandCoins },
   { key: 'rate-buydown', label: 'Rate Buydown', Icon: BadgeDollarSign },
-  { key: 'reverse-mortgage', label: 'Reverse Mortgage', Icon: Landmark }
+  { key: 'reverse-mortgage', label: 'Reverse Mortgage', Icon: Landmark },
+  { key: 'embed', label: 'Embed', Icon: Code }
 ]
 
 export default function App() {
+  if (typeof window !== 'undefined' && window.location.pathname.startsWith('/embed')) {
+    return <EmbedPage />
+  }
+
   const [activeTab, setActiveTab] = useState<TabKey>('purchase')
 
   return (
@@ -79,6 +88,7 @@ export default function App() {
           {activeTab === 'cash-out' && <CashOutCalculator />}
           {activeTab === 'rate-buydown' && <RateBuydownCalculator />}
           {activeTab === 'reverse-mortgage' && <ReverseMortgageCalculator />}
+          {activeTab === 'embed' && <EmbedBuilder />}
         </div>
 
         <footer className="mt-8 text-center text-xs text-slate-500">
