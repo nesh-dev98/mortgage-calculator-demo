@@ -89,8 +89,8 @@ export function EmbedBuilder() {
   }
 
   return (
-    <div className="rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface)] p-6 shadow-sm text-[var(--mc-text)]">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+    <div className="text-[var(--mc-text)]">
+      <div className="flex flex-wrap items-start justify-between gap-4 rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface)] p-5 shadow-sm">
         <div>
           <div className="text-sm font-semibold text-[var(--mc-text)]">Embed Builder</div>
           <div className="mt-1 text-sm text-[var(--mc-muted)]">
@@ -116,7 +116,8 @@ export function EmbedBuilder() {
         </div>
       </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[380px_1fr]">
+      <div className="mt-6 grid gap-6 lg:grid-cols-[360px_minmax(0,1fr)] xl:grid-cols-[380px_minmax(0,1fr)]">
+        {/* Theme sidebar (outside the preview container) */}
         <section className="rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface-muted)] p-4 shadow-sm">
           <div className="mb-3 flex items-center justify-between">
             <div className="text-sm font-semibold text-[var(--mc-text)]">Theme</div>
@@ -260,9 +261,10 @@ export function EmbedBuilder() {
           ) : null}
         </section>
 
+        {/* Preview gets the majority of width */}
         <section className="rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface-muted)] p-4 shadow-sm">
           <div className="mb-3 text-sm font-semibold text-[var(--mc-text)]">Preview</div>
-          <ThemeProvider theme={theme} className="rounded-2xl bg-[var(--mc-bg)] p-4">
+          <ThemeProvider theme={theme} className="rounded-2xl bg-[var(--mc-bg)] p-2 sm:p-3">
             {preview}
           </ThemeProvider>
         </section>
