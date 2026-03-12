@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { CashOutCalculator } from '../components/CashOutCalculator'
 import { PurchaseCalculator } from '../components/PurchaseCalculator'
 import { RateBuydownCalculator } from '../components/RateBuydownCalculator'
@@ -33,10 +34,27 @@ export function EmbedPage() {
   const params = new URLSearchParams(window.location.search)
   const theme = decodeThemeFromParam(params.get('t'))
   const calculator = getCalculatorFromSearch(window.location.search)
+  const mainRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const el = mainRef.current
+    if (!el) return
+
+    const send = () => {
+      const height = document.documentElement.scrollHeight
+      window.parent.postMessage({ type: 'mc-resize', height }, '*')
+    }
+
+    const observer = new ResizeObserver(send)
+    observer.observe(el)
+    send()
+
+    return () => observer.disconnect()
+  }, [])
 
   return (
-    <ThemeProvider theme={theme} className="min-h-screen bg-[var(--mc-bg)] text-[var(--mc-text)]">
-      <main className="mx-auto max-w-5xl p-4 sm:p-6">
+    <ThemeProvider theme={theme} className="bg-[var(--mc-bg)] text-[var(--mc-text)]">
+      <main ref={mainRef} className="mx-auto max-w-5xl p-4 sm:p-6">
         {calculator === 'purchase' && <PurchaseCalculator />}
         {calculator === 'refinance' && <RefinanceCalculator />}
         {calculator === 'rent-vs-buy' && <RentVsBuyCalculator />}

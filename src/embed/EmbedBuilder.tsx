@@ -91,7 +91,8 @@ export function EmbedBuilder() {
     const merged = mergeTheme(theme)
     const t = encodeThemeToParam(merged)
     const src = `${origin}/embed?calculator=${encodeURIComponent(calculator)}&t=${encodeURIComponent(t)}`
-    const code = `<iframe src="${src}" style="border:0;width:100%;max-width:980px;height:820px;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`
+    const id = `mc-${Math.random().toString(36).slice(2, 8)}`
+    const code = `<iframe id="${id}" src="${src}" style="border:0;width:100%;max-width:980px;height:800px;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>\n<script>window.addEventListener('message',function(e){if(e.data&&e.data.type==='mc-resize'){var f=document.getElementById('${id}');if(f)f.style.height=e.data.height+'px';}});<\/script>`
     setGeneratedCode(code)
     setCopyState('idle')
   }
@@ -385,7 +386,7 @@ export function EmbedBuilder() {
               />
               <div className="mt-2 flex items-start gap-2 text-xs text-[var(--mc-muted)]">
                 <Info className="mt-0.5 h-3 w-3 shrink-0" />
-                <span>Adjust the iframe <code className="rounded bg-[var(--mc-surface-muted)] px-1 py-0.5">width</code> and <code className="rounded bg-[var(--mc-surface-muted)] px-1 py-0.5">height</code> attributes to fit your page layout.</span>
+                <span>The height adjusts automatically to fit the full calculator. You can change the <code className="rounded bg-[var(--mc-surface-muted)] px-1 py-0.5">max-width</code> to fit your layout.</span>
               </div>
             </div>
           ) : null}
