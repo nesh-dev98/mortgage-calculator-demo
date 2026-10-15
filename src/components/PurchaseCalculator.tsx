@@ -1,8 +1,4 @@
-import { useEffect, useId, useMemo, useState } from 'react'
-import { Cell, Pie, PieChart, ResponsiveContainer, Sector, Tooltip } from 'recharts'
-import { CHART_ANIMATION, CyberpunkTooltip, renderCyberpunkDefs } from './charts/cyberpunk'
-import { useEmbedTheme } from '../embed/ThemeProvider'
-import { hexToRgba } from '../embed/color'
+import { useEffect, useMemo, useState } from 'react'
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -149,47 +145,20 @@ function formatMonthly(value: number) {
 }
 
 export function PurchaseCalculator() {
-  const theme = useEmbedTheme()
   const [homePrice, setHomePrice] = useState(400_000)
   const [downPayment, setDownPayment] = useState(80_000)
   const [interestRatePercent, setInterestRatePercent] = useState(6.5)
   const [loanTermYears, setLoanTermYears] = useState(30)
-  const [annualPropertyTax, setAnnualPropertyTax] = useState(4_000)
-  const [annualHomeInsurance, setAnnualHomeInsurance] = useState(1_200)
 
-  const {
-    loanAmount,
-    monthlyPI,
-    monthlyTax,
-    monthlyInsurance,
-    totalMonthlyPayment
-  } = useMemo(() => {
+  const { loanAmount, monthlyPI } = useMemo(() => {
     const loan = Math.max(0, homePrice - downPayment)
     const pi = calculateMonthlyPrincipalAndInterest(loan, interestRatePercent, loanTermYears)
-    const tax = clampNonNegative(annualPropertyTax) / 12
-    const ins = clampNonNegative(annualHomeInsurance) / 12
-    const total = pi + tax + ins
 
     return {
       loanAmount: loan,
-      monthlyPI: pi,
-      monthlyTax: tax,
-      monthlyInsurance: ins,
-      totalMonthlyPayment: total
+      monthlyPI: pi
     }
-  }, [annualHomeInsurance, annualPropertyTax, downPayment, homePrice, interestRatePercent, loanTermYears])
-
-  const chartData = useMemo(
-    () => [
-      { name: 'Principal & Interest', value: monthlyPI },
-      { name: 'Tax', value: monthlyTax },
-      { name: 'Insurance', value: monthlyInsurance }
-    ],
-    [monthlyPI, monthlyTax, monthlyInsurance]
-  )
-
-  const chartId = `cp-purchase-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`
-  const [activeSlice, setActiveSlice] = useState<number | null>(null)
+  }, [downPayment, homePrice, interestRatePercent, loanTermYears])
 
   const downPaymentPct = homePrice > 0 ? (downPayment / homePrice) * 100 : 0
 
@@ -199,11 +168,8 @@ export function PurchaseCalculator() {
         <div>
           <div className="text-sm font-semibold text-[var(--mc-text)]">Purchase</div>
           <div className="mt-1 text-sm text-[var(--mc-muted)]">
-            Estimate your monthly payment with taxes and insurance.
+            Estimate your monthly principal and interest payments.
           </div>
-        </div>
-        <div className="rounded-xl border border-[var(--mc-border)] bg-[var(--mc-surface-muted)] px-3 py-2 text-xs font-semibold text-[var(--mc-muted)]">
-          Live updates
         </div>
       </div>
 
@@ -247,21 +213,6 @@ export function PurchaseCalculator() {
               />
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <CurrencyField
-                id="propertyTax"
-                label="Annual Property Tax"
-                value={annualPropertyTax}
-                setValue={setAnnualPropertyTax}
-              />
-              <CurrencyField
-                id="homeInsurance"
-                label="Annual Home Insurance"
-                value={annualHomeInsurance}
-                setValue={setAnnualHomeInsurance}
-              />
-            </div>
-
             <div className="rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface-muted)] p-4">
               <div className="text-xs font-semibold uppercase tracking-wide text-[var(--mc-muted)]">
                 Loan Amount
@@ -282,141 +233,12 @@ export function PurchaseCalculator() {
 
           <div className="rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface-muted)] p-5 shadow-sm">
             <div className="text-xs font-semibold uppercase tracking-wide text-[var(--mc-muted)]">
-              Total Monthly Payment
+              Estimated Monthly Principal &amp; Interest
             </div>
             <div className="mt-1 text-3xl font-semibold tracking-tight text-[var(--mc-text)]">
-              {formatMonthly(totalMonthlyPayment)}
+              {formatMonthly(monthlyPI)}
             </div>
-
-            <div className="mt-4 grid gap-3">
-              <div className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-2">
-                  <span
-                    className="h-2.5 w-2.5 rounded-full"
-                    style={{
-                      backgroundImage: `linear-gradient(135deg, ${theme.chart.primaryFrom} 0%, ${theme.chart.primaryTo} 100%)`,
-                      boxShadow: `0 0 14px ${hexToRgba(theme.chart.primaryTo, 0.28)}`
-                    }}
-                  />
-                  <span className="font-medium text-[color:var(--mc-text)]/80">
-                    Principal &amp; Interest
-                  </span>
-                </div>
-                <div className="font-semibold text-[var(--mc-text)]">{formatMonthly(monthlyPI)}</div>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-2">
-                  <span
-                    className="h-2.5 w-2.5 rounded-full"
-                    style={{
-                      backgroundImage: `linear-gradient(135deg, ${theme.chart.accentFrom} 0%, ${theme.chart.accentTo} 100%)`,
-                      boxShadow: `0 0 14px ${hexToRgba(theme.chart.accentTo, 0.2)}`
-                    }}
-                  />
-                  <span className="font-medium text-[color:var(--mc-text)]/80">Tax</span>
-                </div>
-                <div className="font-semibold text-[var(--mc-text)]">{formatMonthly(monthlyTax)}</div>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-2">
-                  <span
-                    className="h-2.5 w-2.5 rounded-full"
-                    style={{
-                      backgroundImage: `linear-gradient(135deg, ${theme.chart.neutralFrom} 0%, ${theme.chart.neutralTo} 100%)`,
-                      boxShadow: `0 0 10px ${hexToRgba(theme.chart.neutralTo, 0.12)}`
-                    }}
-                  />
-                  <span className="font-medium text-[color:var(--mc-text)]/80">Insurance</span>
-                </div>
-                <div className="font-semibold text-[var(--mc-text)]">
-                  {formatMonthly(monthlyInsurance)}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-6 grid gap-6 lg:grid-cols-1">
-            <div className="rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface)] p-4 shadow-sm">
-              <div className="mb-3 flex items-center justify-between">
-                <div className="text-sm font-semibold text-[var(--mc-text)]">Breakdown</div>
-                <div className="text-xs font-medium text-[var(--mc-muted)]">Donut chart</div>
-              </div>
-
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart key={chartId}>
-                    {renderCyberpunkDefs(chartId, theme.chart)}
-                    <Pie
-                      data={chartData}
-                      dataKey="value"
-                      nameKey="name"
-                      innerRadius={70}
-                      outerRadius={105}
-                      paddingAngle={2}
-                      isAnimationActive
-                      animationDuration={CHART_ANIMATION.durationMs}
-                      animationEasing={CHART_ANIMATION.easing}
-                      animationBegin={50}
-                      activeIndex={activeSlice ?? -1}
-                      activeShape={(props: unknown) => {
-                        const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } =
-                          props as {
-                            cx: number
-                            cy: number
-                            innerRadius: number
-                            outerRadius: number
-                            startAngle: number
-                            endAngle: number
-                            fill: string
-                          }
-
-                        return (
-                          <Sector
-                            cx={cx}
-                            cy={cy}
-                            innerRadius={innerRadius}
-                            outerRadius={outerRadius + 15}
-                            startAngle={startAngle}
-                            endAngle={endAngle}
-                            fill={fill}
-                            filter={`url(#${chartId}-glow)`}
-                          />
-                        )
-                      }}
-                      onMouseEnter={(_, idx) => setActiveSlice(idx)}
-                      onMouseLeave={() => setActiveSlice(null)}
-                    >
-                      <Cell
-                        fill={`url(#${chartId}-grad-primary)`}
-                        stroke="rgba(255,255,255,0.35)"
-                        strokeWidth={1}
-                      />
-                      <Cell
-                        fill={`url(#${chartId}-grad-accent)`}
-                        stroke="rgba(255,255,255,0.35)"
-                        strokeWidth={1}
-                      />
-                      <Cell
-                        fill={`url(#${chartId}-grad-neutral)`}
-                        stroke="rgba(255,255,255,0.35)"
-                        strokeWidth={1}
-                      />
-                    </Pie>
-                    <Tooltip
-                      formatter={(v: unknown) =>
-                        formatMonthly(typeof v === 'number' ? v : Number(v))
-                      }
-                      content={
-                        <CyberpunkTooltip valueFormatter={v =>
-                          formatMonthly(typeof v === 'number' ? v : Number(v))
-                        } />
-                      }
-                      cursor={false}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
+            <div className="mt-1 text-xs text-[var(--mc-muted)]">Excludes taxes and insurance</div>
           </div>
         </section>
       </div>

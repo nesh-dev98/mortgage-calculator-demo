@@ -129,9 +129,8 @@ export function RefinanceCalculator() {
   const [currentRate, setCurrentRate] = useState(7.25)
   const [newRate, setNewRate] = useState(6.5)
   const [newTermYears, setNewTermYears] = useState(30)
-  const [closingCosts, setClosingCosts] = useState(6_000)
 
-  const { oldMonthlyPayment, newMonthlyPayment, monthlySavings, breakEvenMonths } = useMemo(() => {
+  const { oldMonthlyPayment, newMonthlyPayment, monthlySavings } = useMemo(() => {
     // Note: since we don't have an explicit "remaining term" input, we use the same term for both
     // old and new payments so the comparison is apples-to-apples.
     const oldPay = calculateMonthlyPrincipalAndInterest(
@@ -145,15 +144,12 @@ export function RefinanceCalculator() {
       newTermYears
     )
     const savings = oldPay - newPay
-    const months =
-      savings > 0 ? Math.ceil(clampNonNegative(closingCosts) / savings) : Infinity
     return {
       oldMonthlyPayment: oldPay,
       newMonthlyPayment: newPay,
-      monthlySavings: savings,
-      breakEvenMonths: months
+      monthlySavings: savings
     }
-  }, [closingCosts, currentRate, newRate, newTermYears, originalLoanBalance])
+  }, [currentRate, newRate, newTermYears, originalLoanBalance])
 
   const chartId = `cp-refinance-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`
   const chartData = useMemo(
@@ -164,19 +160,14 @@ export function RefinanceCalculator() {
     [newMonthlyPayment, oldMonthlyPayment]
   )
 
-  const showBreakEven = Number.isFinite(breakEvenMonths) && breakEvenMonths > 0
-
   return (
     <div className="rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface)] p-6 shadow-sm text-[var(--mc-text)]">
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="text-sm font-semibold text-[var(--mc-text)]">Refinance</div>
           <div className="mt-1 text-sm text-[var(--mc-muted)]">
-            Compare monthly payments and estimate a break-even point.
+            Compare your monthly payment before and after refinancing.
           </div>
-        </div>
-        <div className="rounded-xl border border-[var(--mc-border)] bg-[var(--mc-surface-muted)] px-3 py-2 text-xs font-semibold text-[var(--mc-muted)]">
-          Live updates
         </div>
       </div>
 
@@ -221,12 +212,6 @@ export function RefinanceCalculator() {
               suffix="yrs"
               helper="We use this same term for both Old and New payments for a clean comparison."
             />
-            <MoneyInput
-              id="closingCosts"
-              label="Closing Costs"
-              value={closingCosts}
-              onChange={setClosingCosts}
-            />
           </div>
         </section>
 
@@ -235,30 +220,17 @@ export function RefinanceCalculator() {
           <div className="mb-4 text-sm font-semibold text-[var(--mc-text)]">Results</div>
 
           <div className="rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface-muted)] p-5 shadow-sm">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <div className="text-xs font-semibold uppercase tracking-wide text-[var(--mc-muted)]">
-                  Monthly Savings
-                </div>
-                <div className="mt-1 text-2xl font-semibold tracking-tight text-[var(--mc-text)]">
-                  {monthlySavings >= 0
-                    ? formatCurrency(monthlySavings)
-                    : `-${formatCurrency(Math.abs(monthlySavings))}`}
-                </div>
-                <div className="mt-1 text-xs text-[var(--mc-muted)]">
-                  Old payment minus new payment.
-                </div>
+            <div>
+              <div className="text-xs font-semibold uppercase tracking-wide text-[var(--mc-muted)]">
+                Monthly Savings
               </div>
-              <div>
-                <div className="text-xs font-semibold uppercase tracking-wide text-[var(--mc-muted)]">
-                  Break-even Point
-                </div>
-                <div className="mt-1 text-2xl font-semibold tracking-tight text-[var(--mc-text)]">
-                  {showBreakEven ? `${breakEvenMonths} mo` : 'N/A'}
-                </div>
-                <div className="mt-1 text-xs text-[var(--mc-muted)]">
-                  Months to recover closing costs.
-                </div>
+              <div className="mt-1 text-2xl font-semibold tracking-tight text-[var(--mc-text)]">
+                {monthlySavings >= 0
+                  ? formatCurrency(monthlySavings)
+                  : `-${formatCurrency(Math.abs(monthlySavings))}`}
+              </div>
+              <div className="mt-1 text-xs text-[var(--mc-muted)]">
+                Old payment minus new payment.
               </div>
             </div>
 

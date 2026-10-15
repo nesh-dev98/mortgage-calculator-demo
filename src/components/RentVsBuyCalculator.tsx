@@ -241,9 +241,6 @@ export function RentVsBuyCalculator() {
             Compare cumulative renting vs net buying costs over time (simplified model).
           </div>
         </div>
-        <div className="rounded-xl border border-[var(--mc-border)] bg-[var(--mc-surface-muted)] px-3 py-2 text-xs font-semibold text-[var(--mc-muted)]">
-          Live updates
-        </div>
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
