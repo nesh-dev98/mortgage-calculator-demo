@@ -44,15 +44,44 @@ function calculateMonthlyPrincipalAndInterest(
   return (P * r * pow) / (pow - 1)
 }
 
+type RangeConfig = {
+  min: number
+  max: number
+  step: number
+}
+
+type RangeSliderProps = {
+  label: string
+  value: number
+  setValue: (n: number) => void
+  range: RangeConfig
+}
+
+function RangeSlider({ label, value, setValue, range }: RangeSliderProps) {
+  return (
+    <input
+      type="range"
+      min={range.min}
+      max={range.max}
+      step={range.step}
+      value={Math.min(range.max, Math.max(range.min, Number.isFinite(value) ? value : 0))}
+      onChange={e => setValue(clampNonNegative(Number(e.target.value)))}
+      className="mt-3 w-full cursor-pointer accent-[var(--mc-primary)]"
+      aria-label={`${label} slider`}
+    />
+  )
+}
+
 type CurrencyFieldProps = {
   id: string
   label: string
   value: number
   setValue: (n: number) => void
   helper?: string
+  range?: RangeConfig
 }
 
-function CurrencyField({ id, label, value, setValue, helper }: CurrencyFieldProps) {
+function CurrencyField({ id, label, value, setValue, helper, range }: CurrencyFieldProps) {
   const [text, setText] = useState(() => formatCurrency(value))
   const [isFocused, setIsFocused] = useState(false)
 
@@ -88,6 +117,7 @@ function CurrencyField({ id, label, value, setValue, helper }: CurrencyFieldProp
           aria-label={label}
         />
       </div>
+      {range ? <RangeSlider label={label} value={value} setValue={setValue} range={range} /> : null}
       {helper ? <div className="mt-1 text-xs text-[var(--mc-muted)]">{helper}</div> : null}
     </label>
   )
@@ -102,6 +132,7 @@ type NumberFieldProps = {
   step?: number
   suffix?: string
   helper?: string
+  range?: RangeConfig
 }
 
 function NumberField({
@@ -112,7 +143,8 @@ function NumberField({
   min = 0,
   step,
   suffix,
-  helper
+  helper,
+  range
 }: NumberFieldProps) {
   return (
     <label className="block">
@@ -135,6 +167,7 @@ function NumberField({
           </span>
         ) : null}
       </div>
+      {range ? <RangeSlider label={label} value={value} setValue={setValue} range={range} /> : null}
       {helper ? <div className="mt-1 text-xs text-[var(--mc-muted)]">{helper}</div> : null}
     </label>
   )
@@ -183,6 +216,7 @@ export function PurchaseCalculator() {
               label="Home Price"
               value={homePrice}
               setValue={setHomePrice}
+              range={{ min: 50_000, max: 2_000_000, step: 5_000 }}
             />
             <CurrencyField
               id="downPayment"
@@ -190,6 +224,7 @@ export function PurchaseCalculator() {
               value={downPayment}
               setValue={setDownPayment}
               helper={`≈ ${downPaymentPct.toFixed(1)}% down`}
+              range={{ min: 0, max: Math.max(0, homePrice), step: 1_000 }}
             />
 
             <div className="grid gap-4 sm:grid-cols-2">
@@ -201,6 +236,7 @@ export function PurchaseCalculator() {
                 min={0}
                 step={0.01}
                 suffix="%"
+                range={{ min: 0, max: 15, step: 0.125 }}
               />
               <NumberField
                 id="loanTerm"
@@ -210,20 +246,10 @@ export function PurchaseCalculator() {
                 min={1}
                 step={1}
                 suffix="yrs"
+                range={{ min: 5, max: 40, step: 1 }}
               />
             </div>
 
-            <div className="rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface-muted)] p-4">
-              <div className="text-xs font-semibold uppercase tracking-wide text-[var(--mc-muted)]">
-                Loan Amount
-              </div>
-              <div className="mt-1 text-lg font-semibold text-[var(--mc-text)]">
-                {formatCurrency(loanAmount)}
-              </div>
-              <div className="mt-1 text-xs text-[var(--mc-muted)]">
-                Home price minus down payment.
-              </div>
-            </div>
           </div>
         </section>
 
@@ -239,6 +265,18 @@ export function PurchaseCalculator() {
               {formatMonthly(monthlyPI)}
             </div>
             <div className="mt-1 text-xs text-[var(--mc-muted)]">Excludes taxes and insurance</div>
+          </div>
+
+          <div className="mt-4 rounded-2xl border border-[var(--mc-border)] bg-[var(--mc-surface-muted)] p-4">
+            <div className="text-xs font-semibold uppercase tracking-wide text-[var(--mc-muted)]">
+              Loan Amount
+            </div>
+            <div className="mt-1 text-lg font-semibold text-[var(--mc-text)]">
+              {formatCurrency(loanAmount)}
+            </div>
+            <div className="mt-1 text-xs text-[var(--mc-muted)]">
+              Home price minus down payment.
+            </div>
           </div>
         </section>
       </div>
